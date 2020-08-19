@@ -106,7 +106,7 @@ public class RandomWorldGenerator {
             checkAdjFromRoomSet(roomIndex);
         }
     }
-    public boolean generateWorld(TETile[][] world){
+    public boolean generateWorld(){
         int count = 30;
         while(isGrow() && !isFullConnect() && count > 0){
             for(int i = 0;i < rooms.length;i++){
@@ -117,6 +117,7 @@ public class RandomWorldGenerator {
         return isFullConnect();
     }
     public void draw(TETile[][] world){
+        fillWorldWithNothing(world);
         for(Room room : rooms){
             room.draw(world);
         }
@@ -127,8 +128,15 @@ public class RandomWorldGenerator {
             indexSet.add(roomFlags[i]);
         return indexSet.size();
     }
+    private void fillWorldWithNothing(TETile[][] world){
+        for (int x = 0; x < width; x += 1) {
+            for (int y = 0; y < height; y += 1) {
+                world[x][y] = Tileset.NOTHING;
+            }
+        }
+    }
     public static void main(String[] args) {
-        int width = 45;
+        int width = 80;
         int height = 45;
         TERenderer ter = new TERenderer();
         ter.initialize(width, height);
@@ -138,11 +146,11 @@ public class RandomWorldGenerator {
                 world[x][y] = Tileset.NOTHING;
             }
         }
-        RandomWorldGenerator worldGen = new RandomWorldGenerator(100,width,height);
+        RandomWorldGenerator worldGen = new RandomWorldGenerator(20,width,height);
         worldGen.setRandomRoomNum(false);
-        worldGen.setMaxRoomNum(70);
+        worldGen.setMaxRoomNum(100);
         worldGen.init();
-        if(worldGen.generateWorld(world)){
+        if(worldGen.generateWorld()){
             worldGen.draw(world);
             ter.renderFrame(world);
         }else{

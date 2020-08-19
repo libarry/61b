@@ -3,6 +3,7 @@ package byog.Core;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 
+
 public class Game {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
@@ -31,8 +32,61 @@ public class Game {
         // TODO: Fill out this method to run the game using the input passed in,
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
-
         TETile[][] finalWorldFrame = null;
+        String seed = "";
+        char[] orderList =input.toCharArray();
+        int i = 0;
+        while(i < orderList.length){
+            char order = orderList[i];
+            if(order == 'N' || order == 'n'){
+                order = orderList[i];
+                i+=1;
+                order = orderList[i];
+                while(order != 'S' && order != 's'){
+                    if(order <= '9'&&order >= '0'){
+                        seed += order;
+                    }else{
+                        throw new IllegalArgumentException("Seed must be a integer number!");
+                    }
+                    i+=1;
+                    order = orderList[i];
+                }
+                if(seed.length()==0){
+                    throw new RuntimeException("you must input a seed!");
+                }else{
+                    finalWorldFrame = new TETile[WIDTH][HEIGHT];
+                    int num = Integer.parseInt(seed);
+                    RandomWorldGenerator worldGen = new RandomWorldGenerator(num,WIDTH,HEIGHT);
+                    worldGen.init();
+                    worldGen.generateWorld();
+                    worldGen.draw(finalWorldFrame);
+                }
+            }
+            if(order == 'w' ||order == 'W'){}
+            if(order == 'a' ||order == 'A'){}
+            if(order == 's' ||order == 'S'){}
+            if(order == 'd' ||order == 'D'){}
+            if(order == 'l' ||order == 'L'){
+                saveGame s = new saveGame("./a.save");
+                gameInfo info = s.getObjFromFile();
+                finalWorldFrame = info.world;
+            }
+            if(order == 'q' ||order == 'Q'){
+                gameInfo info = new gameInfo(finalWorldFrame);
+                saveGame s = new saveGame("./a.save");
+                s.saveObjToFile(info);
+            }
+            i+=1;
+        }
         return finalWorldFrame;
     }
+    public static void main(String args[]){
+        TETile[][] world = null;
+        TERenderer ter = new TERenderer();
+        ter.initialize(WIDTH, HEIGHT);
+        Game g = new Game();
+        world = g.playWithInputString("l");
+        ter.renderFrame(world);
+    }
+
 }
